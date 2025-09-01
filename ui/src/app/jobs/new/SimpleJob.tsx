@@ -583,6 +583,13 @@ export default function SimpleJob({
                     { value: 'automagic2', label: 'Automagic v2' },
                     { value: 'prodigy', label: 'Prodigy' },
                     { value: 'prodigy8bit', label: 'Prodigy8Bit' },
+                    { value: 'prodigy_plus_schedule_free', label: 'Prodigy+ScheduleFree' },
+                    { value: 'optim.madgrad', label: 'MADGRAD' },
+                    { value: 'optim.novograd', label: 'Novograd' },
+                    { value: 'optim.pid', label: 'PID' },
+                    { value: 'optim.qhadam', label: 'QHAdam' },
+                    { value: 'optim.ranger', label: 'Ranger' },
+                    { value: 'optim.yogi', label: 'Yogi' },
                   ]}
                 />
                 <NumberInput

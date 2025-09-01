@@ -1,4 +1,5 @@
 -r requirements_base.txt
 scipy==1.12.0
 clauto-opt
-torch_optimizer
+torch_optimizer==0.3.0
+prodigy-plus-schedule-free==2.0.0rc2
