@@ -1111,10 +1111,11 @@ class GenerateImageConfig:
         self.fps = fps
         self.ctrl_img = ctrl_img
         self.ctrl_idx = ctrl_idx
-        
+        self.upload_samples = os.getenv('UPLOAD_SAMPLES', 'true').lower() == 'true'
+
         if ctrl_img_1 is None and ctrl_img is not None:
             ctrl_img_1 = ctrl_img
-        
+
         self.ctrl_img_1 = ctrl_img_1
         self.ctrl_img_2 = ctrl_img_2
         self.ctrl_img_3 = ctrl_img_3
@@ -1340,14 +1341,17 @@ class GenerateImageConfig:
     ):
         # this is called after prompt embeds are encoded. We can override them in the future here
         pass
-    
+
     def log_image(self, image, count: int = 0, max_count=0):
         if self.logger is None:
             return
 
+        if not self.upload_samples:
+            return
+
         self.logger.log_image(image, count, self.prompt)
-        
-        
+
+
 def validate_configs(
     train_config: TrainConfig,
     model_config: ModelConfig,
