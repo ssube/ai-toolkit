@@ -25,6 +25,12 @@ class Logger:
     def isatty(self):
         return self.terminal.isatty()
 
+    def isatty(self):
+        """
+        Called by wandb to check if the logger is a tty.
+        """
+        return False
+
 
 def setup_log_to_file(filename):
     if get_accelerator().is_local_main_process:
