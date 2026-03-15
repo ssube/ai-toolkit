@@ -68,6 +68,9 @@ COPY requirements.txt /app/ai-toolkit/requirements.txt
 RUN pip install --no-cache-dir --break-system-packages -r requirements.txt && \
     pip install setuptools==69.5.1 --no-cache-dir --break-system-packages
 
+# Install Claude Code
+RUN npm install -g @anthropic-ai/claude-code
+
 # Build UI
 WORKDIR /app/ai-toolkit/ui
 RUN npm install && \
