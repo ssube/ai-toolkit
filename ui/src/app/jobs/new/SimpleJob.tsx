@@ -674,6 +674,173 @@ export default function SimpleJob({
                   />
                 )}
 
+                <FormGroup label="Claude Optimizer" className="pt-2">
+                  <Checkbox
+                    label="Use Claude Optimizer"
+                    className="pt-1"
+                    docKey={'train.use_clauto_opt'}
+                    checked={jobConfig.config.process[0].train.use_clauto_opt || false}
+                    onChange={value => {
+                      setJobConfig(value, 'config.process[0].train.use_clauto_opt');
+                      if (value && !jobConfig.config.process[0].train.clauto_opt_config) {
+                        setJobConfig(
+                          {
+                            consult_every_n_steps: 100,
+                            loss_sampling_rate: 0.1,
+                            plateau_patience: 20,
+                            plateau_threshold: 0.0001,
+                            spike_factor: 3.0,
+                            spike_window: 10,
+                            loss_history_maxlen: 500,
+                            lr_change_max_factor: 10.0,
+                            model: 'claude-sonnet-4-6',
+                            backend: 'api',
+                            dry_run: false,
+                            auto_stop: false,
+                          },
+                          'config.process[0].train.clauto_opt_config',
+                        );
+                      }
+                    }}
+                  />
+                </FormGroup>
+                {jobConfig.config.process[0].train.use_clauto_opt && (
+                  <>
+                    <NumberInput
+                      label="Consult Every N Steps"
+                      className="pt-2"
+                      value={jobConfig.config.process[0].train.clauto_opt_config?.consult_every_n_steps as number}
+                      onChange={value =>
+                        setJobConfig(value, 'config.process[0].train.clauto_opt_config.consult_every_n_steps')
+                      }
+                      docKey={'train.clauto_opt_config.consult_every_n_steps'}
+                      placeholder="eg. 100"
+                      min={1}
+                    />
+                    <NumberInput
+                      label="Loss Sampling Rate"
+                      className="pt-2"
+                      value={jobConfig.config.process[0].train.clauto_opt_config?.loss_sampling_rate as number}
+                      onChange={value =>
+                        setJobConfig(value, 'config.process[0].train.clauto_opt_config.loss_sampling_rate')
+                      }
+                      docKey={'train.clauto_opt_config.loss_sampling_rate'}
+                      placeholder="eg. 0.1"
+                      min={0}
+                    />
+                    <NumberInput
+                      label="Plateau Patience"
+                      className="pt-2"
+                      value={jobConfig.config.process[0].train.clauto_opt_config?.plateau_patience as number}
+                      onChange={value =>
+                        setJobConfig(value, 'config.process[0].train.clauto_opt_config.plateau_patience')
+                      }
+                      docKey={'train.clauto_opt_config.plateau_patience'}
+                      placeholder="eg. 20"
+                      min={1}
+                    />
+                    <NumberInput
+                      label="Plateau Threshold"
+                      className="pt-2"
+                      value={jobConfig.config.process[0].train.clauto_opt_config?.plateau_threshold as number}
+                      onChange={value =>
+                        setJobConfig(value, 'config.process[0].train.clauto_opt_config.plateau_threshold')
+                      }
+                      docKey={'train.clauto_opt_config.plateau_threshold'}
+                      placeholder="eg. 0.0001"
+                      min={0}
+                    />
+                    <NumberInput
+                      label="Spike Factor"
+                      className="pt-2"
+                      value={jobConfig.config.process[0].train.clauto_opt_config?.spike_factor as number}
+                      onChange={value =>
+                        setJobConfig(value, 'config.process[0].train.clauto_opt_config.spike_factor')
+                      }
+                      docKey={'train.clauto_opt_config.spike_factor'}
+                      placeholder="eg. 3.0"
+                      min={0}
+                    />
+                    <NumberInput
+                      label="Spike Window"
+                      className="pt-2"
+                      value={jobConfig.config.process[0].train.clauto_opt_config?.spike_window as number}
+                      onChange={value =>
+                        setJobConfig(value, 'config.process[0].train.clauto_opt_config.spike_window')
+                      }
+                      docKey={'train.clauto_opt_config.spike_window'}
+                      placeholder="eg. 10"
+                      min={1}
+                    />
+                    <NumberInput
+                      label="Loss History Max Length"
+                      className="pt-2"
+                      value={jobConfig.config.process[0].train.clauto_opt_config?.loss_history_maxlen as number}
+                      onChange={value =>
+                        setJobConfig(value, 'config.process[0].train.clauto_opt_config.loss_history_maxlen')
+                      }
+                      docKey={'train.clauto_opt_config.loss_history_maxlen'}
+                      placeholder="eg. 500"
+                      min={10}
+                    />
+                    <NumberInput
+                      label="LR Change Max Factor"
+                      className="pt-2"
+                      value={jobConfig.config.process[0].train.clauto_opt_config?.lr_change_max_factor as number}
+                      onChange={value =>
+                        setJobConfig(value, 'config.process[0].train.clauto_opt_config.lr_change_max_factor')
+                      }
+                      docKey={'train.clauto_opt_config.lr_change_max_factor'}
+                      placeholder="eg. 10.0"
+                      min={1}
+                    />
+                    <SelectInput
+                      label="Claude Model"
+                      value={jobConfig.config.process[0].train.clauto_opt_config?.model || 'claude-sonnet-4-6'}
+                      onChange={value =>
+                        setJobConfig(value, 'config.process[0].train.clauto_opt_config.model')
+                      }
+                      docKey={'train.clauto_opt_config.model'}
+                      options={[
+                        { value: 'claude-sonnet-4-6', label: 'Claude Sonnet 4.6' },
+                        { value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5' },
+                        { value: 'claude-opus-4-6', label: 'Claude Opus 4.6' },
+                      ]}
+                    />
+                    <SelectInput
+                      label="Backend"
+                      className="pt-2"
+                      value={jobConfig.config.process[0].train.clauto_opt_config?.backend || 'api'}
+                      onChange={value =>
+                        setJobConfig(value, 'config.process[0].train.clauto_opt_config.backend')
+                      }
+                      docKey={'train.clauto_opt_config.backend'}
+                      options={[
+                        { value: 'api', label: 'API' },
+                        { value: 'cli', label: 'CLI' },
+                      ]}
+                    />
+                    <Checkbox
+                      label="Dry Run"
+                      className="pt-2"
+                      checked={jobConfig.config.process[0].train.clauto_opt_config?.dry_run || false}
+                      onChange={value =>
+                        setJobConfig(value, 'config.process[0].train.clauto_opt_config.dry_run')
+                      }
+                      docKey={'train.clauto_opt_config.dry_run'}
+                    />
+                    <Checkbox
+                      label="Auto-stop when Claude recommends stopping"
+                      className="pt-2"
+                      checked={jobConfig.config.process[0].train.clauto_opt_config?.auto_stop || false}
+                      onChange={value =>
+                        setJobConfig(value, 'config.process[0].train.clauto_opt_config.auto_stop')
+                      }
+                      docKey={'train.clauto_opt_config.auto_stop'}
+                    />
+                  </>
+                )}
+
                 <FormGroup label="Text Encoder Optimizations" className="pt-2">
                   {!disableSections.includes('train.unload_text_encoder') && (
                     <Checkbox

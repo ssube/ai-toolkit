@@ -116,6 +116,21 @@ export interface EMAConfig {
   ema_decay: number;
 }
 
+export interface ClautoOptConfig {
+  consult_every_n_steps: number;
+  loss_sampling_rate: number;
+  plateau_patience: number;
+  plateau_threshold: number;
+  spike_factor: number;
+  spike_window: number;
+  loss_history_maxlen: number;
+  lr_change_max_factor: number;
+  model: string;
+  backend: string;
+  dry_run: boolean;
+  auto_stop: boolean;
+}
+
 export interface TrainConfig {
   batch_size: number;
   bypass_guidance_embedding?: boolean;
@@ -130,6 +145,8 @@ export interface TrainConfig {
   optimizer: string;
   lr: number;
   ema_config?: EMAConfig;
+  use_clauto_opt?: boolean;
+  clauto_opt_config?: ClautoOptConfig;
   dtype: string;
   unload_text_encoder: boolean;
   cache_text_embeddings: boolean;
