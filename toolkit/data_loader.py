@@ -670,7 +670,7 @@ def get_dataloader_from_datasets(
             print(f"Validation split: {validation_split} out of {len(dataset)}")
             train_dataset, validation_dataset = random_split(
                 dataset,
-                [validation_split, len(dataset) - validation_split],
+                [len(dataset) - validation_split, validation_split],
                 generator=torch.Generator().manual_seed(validation_seed)
             )
             train_datasets.append(train_dataset)
@@ -707,8 +707,8 @@ def get_dataloader_from_datasets(
 
     if has_buckets:
         # make sure they all have buckets
-        for dataset in train_datasets:
-            assert dataset.dataset_config.buckets, f"buckets not found on dataset {dataset.dataset_config.folder_path}, you either need all buckets or none"
+        for config in dataset_config_list:
+            assert config.buckets, f"buckets not found on dataset {config.folder_path}, you either need all buckets or none"
 
         train_data_loader = DataLoader(
             concatenated_dataset,
