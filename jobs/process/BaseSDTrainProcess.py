@@ -753,6 +753,14 @@ class BaseSDTrainProcess(BaseTrainProcess):
         
         # prepare other things
         self.optimizer = self.accelerator.prepare(self.optimizer)
+        if self.train_config.use_clauto_opt:
+            from clauto_opt import ClaudeOptimizer, ClaudeOptimizerConfig
+            clauto_kwargs = {k: v for k, v in self.train_config.clauto_opt_config.items() if k != 'auto_stop'}
+            clauto_config = ClaudeOptimizerConfig(
+                total_steps=self.train_config.steps,
+                **clauto_kwargs
+            )
+            self.optimizer = ClaudeOptimizer(self.optimizer, config=clauto_config)
         if self.lr_scheduler is not None:
             self.lr_scheduler = self.accelerator.prepare(self.lr_scheduler)
         # self.data_loader = self.accelerator.prepare(self.data_loader)
@@ -2380,6 +2388,11 @@ class BaseSDTrainProcess(BaseTrainProcess):
                 self.step_num = step + 1
                 self.grad_accumulation_step += 1
                 self.end_step_hook()
+
+                if (hasattr(self.optimizer, 'should_stop') and self.optimizer.should_stop
+                        and self.train_config.clauto_opt_config.get('auto_stop', False)):
+                    print_acc("Claude optimizer recommends stopping training early")
+                    break
 
 
         ###################################################################

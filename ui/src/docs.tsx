@@ -329,6 +329,67 @@ const docs: { [key: string]: ConfigDoc } = {
       </>
     ),
   },
+  'train.use_clauto_opt': {
+    title: 'Claude Optimizer',
+    description: (
+      <>
+        Wraps the training optimizer with{' '}
+        <a className="text-blue-500" href="https://pypi.org/project/clauto-opt/" target="_blank">
+          clauto-opt
+        </a>
+        , which periodically consults Claude to adjust hyperparameters based on training dynamics. The existing
+        optimizer is used as the inner optimizer. Requires an Anthropic API key.
+      </>
+    ),
+  },
+  'train.clauto_opt_config.consult_every_n_steps': {
+    title: 'Consult Every N Steps',
+    description: <>How often (in steps) to consult Claude for hyperparameter adjustments.</>,
+  },
+  'train.clauto_opt_config.loss_sampling_rate': {
+    title: 'Loss Sampling Rate',
+    description: <>Fraction of steps to sample loss values for analysis. Lower values reduce overhead.</>,
+  },
+  'train.clauto_opt_config.plateau_patience': {
+    title: 'Plateau Patience',
+    description: <>Number of consultations to wait before declaring a loss plateau.</>,
+  },
+  'train.clauto_opt_config.plateau_threshold': {
+    title: 'Plateau Threshold',
+    description: <>Minimum loss change to consider as progress rather than a plateau.</>,
+  },
+  'train.clauto_opt_config.spike_factor': {
+    title: 'Spike Factor',
+    description: <>Multiplier above the rolling mean to classify a loss value as a spike.</>,
+  },
+  'train.clauto_opt_config.spike_window': {
+    title: 'Spike Window',
+    description: <>Number of recent loss samples to use for spike detection.</>,
+  },
+  'train.clauto_opt_config.loss_history_maxlen': {
+    title: 'Loss History Max Length',
+    description: <>Maximum number of loss samples to retain in the history buffer.</>,
+  },
+  'train.clauto_opt_config.lr_change_max_factor': {
+    title: 'LR Change Max Factor',
+    description: <>Maximum factor by which Claude can adjust the learning rate in a single consultation.</>,
+  },
+  'train.clauto_opt_config.model': {
+    title: 'Claude Model',
+    description: <>Which Claude model to use for optimizer consultations.</>,
+  },
+  'train.clauto_opt_config.backend': {
+    title: 'Backend',
+    description: <>Whether to use the Anthropic API directly or the Claude CLI for consultations.</>,
+  },
+  'train.clauto_opt_config.dry_run': {
+    title: 'Dry Run',
+    description: <>When enabled, logs what Claude would recommend without actually changing hyperparameters.</>,
+  },
+  'train.clauto_opt_config.auto_stop': {
+    title: 'Auto Stop',
+    description: <>When enabled, training will stop early if Claude recommends stopping.</>,
+  },
 };
 
 export const getDoc = (key: string | null | undefined): ConfigDoc | null => {

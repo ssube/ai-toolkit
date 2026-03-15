@@ -2077,6 +2077,8 @@ class SDTrainer(BaseSDTrainProcess):
                 else:
                     self.accelerator.clip_grad_norm_(self.params, self.train_config.max_grad_norm)
             # only step if we are not accumulating
+            if hasattr(self.optimizer, 'record_loss'):
+                self.optimizer.record_loss((total_loss / len(batch_list)).item())
             with self.timer('optimizer_step'):
                 self.optimizer.step()
 
