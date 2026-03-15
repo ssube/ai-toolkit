@@ -2148,24 +2148,20 @@ class SDTrainer(BaseSDTrainProcess):
             {'loss': (total_loss / len(batch_list)).item()}
         )
 
-        if self.validate_config.validate_every is not None and self.step_num % self.validate_config.validate_every == 0:
+        if self.validate_config.validate_every is not None and self.step_num % self.validate_config.validate_every == 0 and len(self.validation_data_loader.dataset) > 0:
             validation_loss = self.hook_validation_loop(self.validation_data_loader)
-            loss_dict['validation_loss'] = validation_loss.item()
+            if validation_loss is not None:
+                loss_dict['validation_loss'] = validation_loss.item()
 
         self.end_of_training_loop()
 
         return loss_dict
 
-    def hook_validation_loop(self, batch: Union[DataLoaderBatchDTO, List[DataLoaderBatchDTO]]):
+    def hook_validation_loop(self, data_loader: DataLoader):
         """
         Validation loop that evaluates model performance without updating weights.
         Similar to training but with no gradient calculations or optimizer steps.
         """
-        if isinstance(batch, list):
-            batch_list = batch
-        else:
-            batch_list = [batch]
-
         total_loss = None
 
         # Ensure model components are in eval mode
@@ -2177,7 +2173,7 @@ class SDTrainer(BaseSDTrainProcess):
             self.sd.unet.eval()
 
         with torch.no_grad():
-            for batch in batch_list:
+            for batch in data_loader:
                 # Preprocess batch and get required tensors
                 batch = self.preprocess_batch(batch)
                 dtype = get_torch_dtype(self.train_config.dtype)
@@ -2220,4 +2216,6 @@ class SDTrainer(BaseSDTrainProcess):
         if self.sd.unet is not None:
             self.sd.unet.train()
 
-        return total_loss.detach()
+        if total_loss is not None:
+            return total_loss.detach()
+        return None
