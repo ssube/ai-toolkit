@@ -12,7 +12,7 @@ import torch
 from PIL import Image
 from PIL.ImageOps import exif_transpose
 from torchvision import transforms
-from torch.utils.data import Dataset, DataLoader, ConcatDataset, random_split
+from torch.utils.data import Dataset, DataLoader, ConcatDataset, Subset, random_split
 from tqdm import tqdm
 import albumentations as A
 
@@ -744,6 +744,13 @@ def get_dataloader_from_datasets(
     return train_data_loader, validation_data_loader
 
 
+def _unwrap_dataset(dataset):
+    """Unwrap Subset to get the underlying dataset."""
+    if isinstance(dataset, Subset):
+        return dataset.dataset
+    return dataset
+
+
 def trigger_dataloader_setup_epoch(dataloader: DataLoader):
     # hacky but needed because of different types of datasets and dataloaders
     dataloader.len = None
@@ -751,21 +758,25 @@ def trigger_dataloader_setup_epoch(dataloader: DataLoader):
         for dataset in dataloader.dataset:
             if hasattr(dataset, 'datasets'):
                 for sub_dataset in dataset.datasets:
-                    if hasattr(sub_dataset, 'setup_epoch'):
-                        sub_dataset.setup_epoch()
-                        sub_dataset.len = None
-            elif hasattr(dataset, 'setup_epoch'):
-                dataset.setup_epoch()
-                dataset.len = None
+                    inner = _unwrap_dataset(sub_dataset)
+                    if hasattr(inner, 'setup_epoch'):
+                        inner.setup_epoch()
+                        inner.len = None
+            else:
+                inner = _unwrap_dataset(dataset)
+                if hasattr(inner, 'setup_epoch'):
+                    inner.setup_epoch()
+                    inner.len = None
     elif hasattr(dataloader.dataset, 'setup_epoch'):
         dataloader.dataset.setup_epoch()
         dataloader.dataset.len = None
     elif hasattr(dataloader.dataset, 'datasets'):
         dataloader.dataset.len = None
         for sub_dataset in dataloader.dataset.datasets:
-            if hasattr(sub_dataset, 'setup_epoch'):
-                sub_dataset.setup_epoch()
-                sub_dataset.len = None
+            inner = _unwrap_dataset(sub_dataset)
+            if hasattr(inner, 'setup_epoch'):
+                inner.setup_epoch()
+                inner.len = None
 
 def get_dataloader_datasets(dataloader: DataLoader):
     # hacky but needed because of different types of datasets and dataloaders
@@ -774,11 +785,11 @@ def get_dataloader_datasets(dataloader: DataLoader):
         for dataset in dataloader.dataset:
             if hasattr(dataset, 'datasets'):
                 for sub_dataset in dataset.datasets:
-                    datasets.append(sub_dataset)
+                    datasets.append(_unwrap_dataset(sub_dataset))
             else:
-                datasets.append(dataset)
+                datasets.append(_unwrap_dataset(dataset))
         return datasets
     elif hasattr(dataloader.dataset, 'datasets'):
-        return dataloader.dataset.datasets
+        return [_unwrap_dataset(d) for d in dataloader.dataset.datasets]
     else:
-        return [dataloader.dataset]
+        return [_unwrap_dataset(dataloader.dataset)]
