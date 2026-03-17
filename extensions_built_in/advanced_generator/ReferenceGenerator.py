@@ -137,7 +137,7 @@ class ReferenceGenerator(BaseExtensionProcess):
         pipe.unet = torch.compile(pipe.unet, mode="reduce-overhead", fullgraph=True)
         # midas_depth = torch.compile(midas_depth, mode="reduce-overhead", fullgraph=True)
 
-        self.data_loader = get_dataloader_from_datasets(self.datasets, 1, self.sd)
+        self.data_loader, _ = get_dataloader_from_datasets(self.datasets, 1, self.sd)
 
         num_batches = len(self.data_loader)
         pbar = tqdm(total=num_batches, desc="Generating images")

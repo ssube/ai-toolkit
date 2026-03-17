@@ -82,7 +82,7 @@ dataset_config = DatasetConfig(
     # ]
 )
 
-dataloader: DataLoader = get_dataloader_from_datasets([dataset_config], batch_size=batch_size, sd=FakeSD())
+dataloader, _ = get_dataloader_from_datasets([dataset_config], batch_size=batch_size, sd=FakeSD())
 
 
 # run through an epoch ang check sizes

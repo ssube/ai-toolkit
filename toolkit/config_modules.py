@@ -43,7 +43,7 @@ class LoggingConfig:
 
 class ValidateConfig:
     def __init__(self, **kwargs):
-        self.validate_every: int = kwargs.get('validate_every', 1000)
+        self.validate_every: int = kwargs.get('validate_every', None)
 
 class SampleItem:
     def __init__(

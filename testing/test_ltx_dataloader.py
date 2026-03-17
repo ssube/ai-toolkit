@@ -67,7 +67,7 @@ dataset_config = DatasetConfig(
 
 )
 
-dataloader: DataLoader = get_dataloader_from_datasets([dataset_config], batch_size=batch_size, sd=FakeSD())
+dataloader, _ = get_dataloader_from_datasets([dataset_config], batch_size=batch_size, sd=FakeSD())
 
 
 def _tensor_to_uint8_video(frames_fchw: torch.Tensor) -> torch.Tensor:

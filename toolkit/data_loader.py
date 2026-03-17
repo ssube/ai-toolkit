@@ -643,7 +643,7 @@ def get_dataloader_from_datasets(
         sd: 'StableDiffusion' = None,
 ) -> tuple[DataLoader, DataLoader]: # train, val
     if dataset_options is None or len(dataset_options) == 0:
-        return None
+        return None, None
 
     train_datasets = []
     validation_datasets = []
@@ -668,13 +668,16 @@ def get_dataloader_from_datasets(
             validation_seed = config.validation_seed
             validation_split = int(config.validation_split * len(dataset))
             print(f"Validation split: {validation_split} out of {len(dataset)}")
-            train_dataset, validation_dataset = random_split(
-                dataset,
-                [len(dataset) - validation_split, validation_split],
-                generator=torch.Generator().manual_seed(validation_seed)
-            )
-            train_datasets.append(train_dataset)
-            validation_datasets.append(validation_dataset)
+            if validation_split > 0:
+                train_dataset, validation_dataset = random_split(
+                    dataset,
+                    [len(dataset) - validation_split, validation_split],
+                    generator=torch.Generator().manual_seed(validation_seed)
+                )
+                train_datasets.append(train_dataset)
+                validation_datasets.append(validation_dataset)
+            else:
+                train_datasets.append(dataset)
             if config.buckets:
                 has_buckets = True
             if config.cache_latents or config.cache_latents_to_disk:
@@ -683,7 +686,10 @@ def get_dataloader_from_datasets(
             raise ValueError(f"invalid dataset type: {config.type}")
 
     concatenated_dataset = ConcatDataset(train_datasets)
-    concatenated_validation_dataset = ConcatDataset(validation_datasets)
+    if validation_datasets:
+        concatenated_validation_dataset = ConcatDataset(validation_datasets)
+    else:
+        concatenated_validation_dataset = None
 
     # todo build scheduler that can get buckets from all datasets that match
     # todo and evenly distribute reg images
@@ -718,14 +724,17 @@ def get_dataloader_from_datasets(
             collate_fn=dto_collation,  # Use the custom collate function
             **dataloader_kwargs
         )
-        validation_data_loader = DataLoader(
-            concatenated_validation_dataset,
-            batch_size=None,  # we batch in the datasets for now
-            drop_last=False,
-            shuffle=False,
-            collate_fn=dto_collation,  # Use the custom collate function
-            **dataloader_kwargs
-        )
+        if concatenated_validation_dataset is not None:
+            validation_data_loader = DataLoader(
+                concatenated_validation_dataset,
+                batch_size=None,  # we batch in the datasets for now
+                drop_last=False,
+                shuffle=False,
+                collate_fn=dto_collation,  # Use the custom collate function
+                **dataloader_kwargs
+            )
+        else:
+            validation_data_loader = None
     else:
         train_data_loader = DataLoader(
             concatenated_dataset,
@@ -734,13 +743,16 @@ def get_dataloader_from_datasets(
             collate_fn=dto_collation,
             **dataloader_kwargs
         )
-        validation_data_loader = DataLoader(
-            concatenated_validation_dataset,
-            batch_size=batch_size,
-            shuffle=False,
-            collate_fn=dto_collation,
-            **dataloader_kwargs
-        )
+        if concatenated_validation_dataset is not None:
+            validation_data_loader = DataLoader(
+                concatenated_validation_dataset,
+                batch_size=batch_size,
+                shuffle=False,
+                collate_fn=dto_collation,
+                **dataloader_kwargs
+            )
+        else:
+            validation_data_loader = None
     return train_data_loader, validation_data_loader
 
 

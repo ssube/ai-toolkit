@@ -129,6 +129,8 @@ class BaseSDTrainProcess(BaseTrainProcess):
         self.lr_scheduler = None
         self.data_loader: Union[DataLoader, None] = None
         self.data_loader_reg: Union[DataLoader, None] = None
+        self.validation_data_loader: Union[DataLoader, None] = None
+        self.validation_data_loader_reg: Union[DataLoader, None] = None
         self.trigger_word = self.get_conf('trigger_word', None)
 
         self.guidance_config: Union[GuidanceConfig, None] = None

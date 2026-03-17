@@ -2148,7 +2148,11 @@ class SDTrainer(BaseSDTrainProcess):
             {'loss': (total_loss / len(batch_list)).item()}
         )
 
-        if self.validate_config.validate_every is not None and self.step_num % self.validate_config.validate_every == 0 and len(self.validation_data_loader.dataset) > 0:
+        if (self.validate_config.validate_every is not None
+                and self.step_num > 0
+                and self.step_num % self.validate_config.validate_every == 0
+                and self.validation_data_loader is not None
+                and len(self.validation_data_loader.dataset) > 0):
             validation_loss = self.hook_validation_loop(self.validation_data_loader)
             if validation_loss is not None:
                 loss_dict['validation_loss'] = validation_loss.item()
