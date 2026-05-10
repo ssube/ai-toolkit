@@ -1,3 +1,6 @@
+torch==2.9.1
+torchvision==0.24.1
+torchaudio==2.9.1
 torchao==0.10.0
 safetensors
 git+https://github.com/huggingface/diffusers.git@dc8d9032171c83741fd37ed2b12bc9d8274464f3
