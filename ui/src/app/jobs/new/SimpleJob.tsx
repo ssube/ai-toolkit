@@ -45,6 +45,60 @@ type Props = {
 
 const isDev = process.env.NODE_ENV === 'development';
 
+const optimizerOptions: GroupedSelectOption[] = [
+  {
+    label: 'Core',
+    options: [
+      { value: 'adafactor', label: 'Adafactor' },
+      { value: 'adam', label: 'Adam' },
+      { value: 'adamw', label: 'AdamW' },
+      { value: 'adamw8bit', label: 'AdamW8Bit' },
+      { value: 'automagic', label: 'Automagic' },
+      { value: 'automagic2', label: 'Automagic v2' },
+    ],
+  },
+  {
+    label: 'Prodigy',
+    options: [
+      { value: 'prodigy', label: 'Prodigy' },
+      { value: 'prodigy8bit', label: 'Prodigy8Bit' },
+      { value: 'prodigy_plus_schedule_free', label: 'Prodigy+ScheduleFree' },
+    ],
+  },
+  {
+    label: 'Advanced',
+    options: [
+      { value: 'optim.a2gradexp', label: 'A2GradExp' },
+      { value: 'optim.a2gradinc', label: 'A2GradInc' },
+      { value: 'optim.a2graduni', label: 'A2GradUni' },
+      { value: 'optim.accsgd', label: 'AccSGD' },
+      { value: 'optim.adabelief', label: 'AdaBelief' },
+      { value: 'optim.adabound', label: 'AdaBound' },
+      { value: 'optim.adamod', label: 'AdaMod' },
+      { value: 'optim.adahessian', label: 'AdaHessian' },
+      { value: 'optim.adamp', label: 'AdamP' },
+      { value: 'optim.aggmo', label: 'AggMo' },
+      { value: 'optim.apollo', label: 'Apollo' },
+      { value: 'optim.diffgrad', label: 'DiffGrad' },
+      { value: 'optim.lamb', label: 'Lamb' },
+      { value: 'optim.madgrad', label: 'MADGRAD' },
+      { value: 'optim.novograd', label: 'Novograd' },
+      { value: 'optim.pid', label: 'PID' },
+      { value: 'optim.qhadam', label: 'QHAdam' },
+      { value: 'optim.qhm', label: 'QHM' },
+      { value: 'optim.radam', label: 'RAdam' },
+      { value: 'optim.ranger', label: 'Ranger' },
+      { value: 'optim.rangerqh', label: 'RangerQH' },
+      { value: 'optim.rangerva', label: 'RangerVA' },
+      { value: 'optim.sgdp', label: 'SGDP' },
+      { value: 'optim.sgdw', label: 'SGDW' },
+      { value: 'optim.swats', label: 'SWATS' },
+      { value: 'optim.shampoo', label: 'Shampoo' },
+      { value: 'optim.yogi', label: 'Yogi' },
+    ],
+  },
+];
+
 export default function SimpleJob({
   jobConfig,
   setJobConfig,
@@ -574,44 +628,7 @@ export default function SimpleJob({
                   label="Optimizer"
                   value={jobConfig.config.process[0].train.optimizer}
                   onChange={value => setJobConfig(value, 'config.process[0].train.optimizer')}
-                  options={[
-                    { value: 'adafactor', label: 'Adafactor' },
-                    { value: 'adam', label: 'Adam' },
-                    { value: 'adamw', label: 'AdamW' },
-                    { value: 'adamw8bit', label: 'AdamW8Bit' },
-                    { value: 'automagic', label: 'Automagic' },
-                    { value: 'automagic2', label: 'Automagic v2' },
-                    { value: 'prodigy', label: 'Prodigy' },
-                    { value: 'prodigy8bit', label: 'Prodigy8Bit' },
-                    { value: 'prodigy_plus_schedule_free', label: 'Prodigy+ScheduleFree' },
-                    { value: 'optim.a2gradexp', label: 'A2GradExp' },
-                    { value: 'optim.a2gradinc', label: 'A2GradInc' },
-                    { value: 'optim.a2graduni', label: 'A2GradUni' },
-                    { value: 'optim.accsgd', label: 'AccSGD' },
-                    { value: 'optim.adabelief', label: 'AdaBelief' },
-                    { value: 'optim.adabound', label: 'AdaBound' },
-                    { value: 'optim.adamod', label: 'AdaMod' },
-                    { value: 'optim.adahessian', label: 'AdaHessian' },
-                    { value: 'optim.adamp', label: 'AdamP' },
-                    { value: 'optim.aggmo', label: 'AggMo' },
-                    { value: 'optim.apollo', label: 'Apollo' },
-                    { value: 'optim.diffgrad', label: 'DiffGrad' },
-                    { value: 'optim.lamb', label: 'Lamb' },
-                    { value: 'optim.madgrad', label: 'MADGRAD' },
-                    { value: 'optim.novograd', label: 'Novograd' },
-                    { value: 'optim.pid', label: 'PID' },
-                    { value: 'optim.qhadam', label: 'QHAdam' },
-                    { value: 'optim.qhm', label: 'QHM' },
-                    { value: 'optim.radam', label: 'RAdam' },
-                    { value: 'optim.ranger', label: 'Ranger' },
-                    { value: 'optim.rangerqh', label: 'RangerQH' },
-                    { value: 'optim.rangerva', label: 'RangerVA' },
-                    { value: 'optim.sgdp', label: 'SGDP' },
-                    { value: 'optim.sgdw', label: 'SGDW' },
-                    { value: 'optim.swats', label: 'SWATS' },
-                    { value: 'optim.shampoo', label: 'Shampoo' },
-                    { value: 'optim.yogi', label: 'Yogi' },
-                  ]}
+                  options={optimizerOptions}
                 />
                 <NumberInput
                   label="Learning Rate"
